@@ -1,2 +1,2 @@
 # Identity Prediction
-Predicting ethnicity, gender, and age with CNNs
+Predicting ethnicity, age, and gender with CNNs
