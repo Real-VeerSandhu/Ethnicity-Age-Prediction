@@ -7,5 +7,4 @@ def load_models():
     ethnicity_model = tf.keras.models.load_model('../models/ethnicity_model.h5')
     gender_model = tf.keras.models.load_model('../models/gender_model.h5')
 
-
 st.title('App Demo')
