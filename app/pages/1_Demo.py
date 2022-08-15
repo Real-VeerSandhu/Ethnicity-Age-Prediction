@@ -84,21 +84,21 @@ def cnn_predict(x_data):
 #     print(f'Age: {age[0][0]}')
 
 st.title('App Demo')
-st.write('Using the user-inputs below, upload (or select) an **image** and run the select `CNN(s)`')
+st.write('Using the user-inputs below, upload (or select) an **image** and run the `CNNs`')
 st.write('----')
 type = st.radio(
      'Select an image upload method',
      ('Upload from local disk', 'Select from testing data'))
 
 if type == 'Upload from local disk':
-    uploaded_image = st.file_uploader('Upload An Image', help='Select an image on local device for the CNNs to process and output', type=['jpg', 'png'])
+    uploaded_image = st.file_uploader('Upload An Image', help='Select an image on your local device for the CNNs to process and output', type=['jpg', 'png'])
     if uploaded_image:
         if st.button('Predict'):
             pred_gender, pred_ethnicity, pred_age = predict_uploaded_image(uploaded_image)
 
             col1, col2 = st.columns([1,1])
             with col1:
-                st.image(uploaded_image)
+                st.image(uploaded_image, width=300)
             with col2:
                 st.write('**Deteced...**')
 
