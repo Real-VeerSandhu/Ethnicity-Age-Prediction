@@ -108,7 +108,7 @@ if type == 'Upload from local disk':
 else:
     image_index = st.select_slider(
      'Select a test image',
-     options=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'])
+     options=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11' ,'12'])
     
     image_dir = 'app/demo_images/image' + image_index + '.png'
 
