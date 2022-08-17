@@ -1,9 +1,16 @@
-from json import load
 import streamlit as st
 import tensorflow as tf
 from PIL import Image, ImageOps
 import numpy as np
+import time
 
+st.set_page_config(page_title="Demo", page_icon="👨", layout='centered', initial_sidebar_state="expanded")
+st.sidebar.success('Select a page above')
+
+my_bar = st.sidebar.progress(0)
+for percent_complete in range(100):
+     time.sleep(0.001)
+     my_bar.progress(percent_complete + 1)
 
 @st.cache(allow_output_mutation=True, show_spinner=True, hash_funcs={"MyUnhashableClass": lambda _: None})
 def load_models():
@@ -28,7 +35,6 @@ def predict_uploaded_image(input_image):
 def predict_dataset_image(path):
     '''Select an image from the testing dataset and upload it into the 3 CNNs'''
     img1 = Image.open(path).convert(mode="RGB")
-    img1 = img1.resize((48,48))
     img1 = ImageOps.grayscale(img1)
     array1 = np.array(img1.getdata())
     processed_image = np.reshape(array1, (48,48,1)) / 255.0
@@ -42,19 +48,22 @@ def cnn_predict(x_data):
     gender = 'Female'
     if pred1 < 0.5:
         gender = 'Male'
+    raw_pred1 = str(abs((pred1-0.5)/0.5)[0]*100) + '% ' + gender
 
     # Ethnicity
     pred2 = ethnicity_model.predict(np.expand_dims(x_data, axis=0))
     label_map = ['Caucasian', 'African', 'East Asian', 'South Asian', 'Latino']
     ethnicity = label_map[np.argmax(pred2)]
+    raw_pred2 = pred2[0]
 
     # Age
+    raw_pred3 = str(age_model.predict(np.expand_dims(x_data, axis=0))[0][0]) + ' years old'
     age = round(age_model.predict(np.expand_dims(x_data, axis=0))[0][0])
         
-    return gender, ethnicity, age
+    return gender, ethnicity, age, [raw_pred1, raw_pred2, raw_pred3]
 
 st.title('App Demo')
-st.write('Using the user-inputs below, upload (or select) an **image** and run the `CNNs`')
+st.write('Use the data inputs below to upload (or select) a **portrait** and run the `CNNs`')
 st.write('----')
 type = st.radio(
      'Select an image upload method',
@@ -63,35 +72,44 @@ type = st.radio(
 if type == 'Upload from local disk':
     uploaded_image = st.file_uploader('Upload An Image', help='Select an image on your local device for the CNNs to process and output', type=['jpg', 'png'])
     if uploaded_image:
-        if st.button('Predict'):
-            pred_gender, pred_ethnicity, pred_age = predict_uploaded_image(uploaded_image)
-
-            col1, col2 = st.columns([1,1])
-            with col1:
-                st.image(uploaded_image, width=300)
-            with col2:
-                st.write('**Deteced...**')
+        file_name = 'Uploaded Image: ' + str(uploaded_image.name) + ' (' + str(uploaded_image.size) +'bytes)'
+        
+        pred_button = st.button('Predict')
+        
+        col1, col2 = st.columns([1,1])
+        with col1:
+            st.image(uploaded_image, width=300, caption=file_name)
+        with col2:
+            if pred_button:
+                pred_gender, pred_ethnicity, pred_age, pred_raw = predict_uploaded_image(uploaded_image)
+                st.write('**Predictions**')
 
                 st.write(f'Gender: `{pred_gender}`')
                 st.write(f'Ethnicity: `{pred_ethnicity}`')
                 st.write(f'Age: `{pred_age}`')
+                st.write('----')
+                st.write('*Raw Output:*', pred_raw)
 else:
     image_index = st.select_slider(
      'Select a test image',
      options=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11' ,'12'])
     
     image_dir = 'app/demo_images/image' + image_index + '.png'
+    file_name = 'Selected Image: image' + str(image_index) + '.png'
 
-    st.write(image_dir)
-    if st.button('Predict'):
-            pred_gender, pred_ethnicity, pred_age = predict_dataset_image(image_dir)
+    st.write(image_dir[4:])
 
-            col1, col2 = st.columns([1,1])
-            with col1:
-                st.image(image_dir, width=300)
-            with col2:
-                st.write('**Deteced...**')
+    pred_button = st.button('Predict')
 
-                st.write(f'Gender: `{pred_gender}`')
-                st.write(f'Ethnicity: `{pred_ethnicity}`')
-                st.write(f'Age: `{pred_age}`')
+    col1, col2 = st.columns([1,1])
+    with col1:
+        st.image(image_dir, width=300, caption=file_name)
+    with col2:
+        if pred_button:
+            pred_gender, pred_ethnicity, pred_age, pred_raw = predict_dataset_image(image_dir)
+            st.write('**Predictions**')
+
+            st.write(f'Gender: `{pred_gender}`')
+            st.write(f'Ethnicity: `{pred_ethnicity}`')
+            st.write(f'Age: `{pred_age}`')
+            st.write('*Raw Output:*', pred_raw)
