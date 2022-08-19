@@ -4,14 +4,17 @@ from PIL import Image, ImageOps
 import numpy as np
 import time
 
+# Page set up
 st.set_page_config(page_title="Demo", page_icon="👨", layout='centered', initial_sidebar_state="expanded")
 st.sidebar.success('Select a page above')
 
+# Buffer loading time
 my_bar = st.sidebar.progress(0)
 for percent_complete in range(100):
      time.sleep(0.001)
      my_bar.progress(percent_complete + 1)
 
+# Save models into cache
 @st.cache(allow_output_mutation=True, show_spinner=True, hash_funcs={"MyUnhashableClass": lambda _: None})
 def load_models():
     print('**Models Loaded**')
@@ -21,6 +24,7 @@ def load_models():
 
 age_model, ethnicity_model, gender_model = load_models()
 
+# Process an uploaded image
 def predict_uploaded_image(input_image):
     '''Process and upload a local image into the 3 CNNs'''
     raw_image = Image.open(input_image).convert('RGB')
@@ -32,8 +36,9 @@ def predict_uploaded_image(input_image):
 
     return cnn_predict(processed_image)
 
+# Process a testing-dataset image
 def predict_dataset_image(path):
-    '''Select an image from the testing dataset and upload it into the 3 CNNs'''
+    '''Select an image from the testing-dataset and upload it into the 3 CNNs'''
     img1 = Image.open(path).convert(mode="RGB")
     img1 = ImageOps.grayscale(img1)
     array1 = np.array(img1.getdata())
@@ -41,6 +46,7 @@ def predict_dataset_image(path):
 
     return cnn_predict(processed_image)
 
+# Predict identity features given pixel data of a 48x48 image
 def cnn_predict(x_data):
     '''Predict gender, ethnicity, and age from a 48x48 image'''
     # Gender
@@ -62,6 +68,7 @@ def cnn_predict(x_data):
         
     return gender, ethnicity, age, [raw_pred1, raw_pred2, raw_pred3]
 
+# User interface
 st.title('App Demo')
 st.write('Use the data inputs below to upload (or select) a **portrait** and run the `CNNs`')
 st.write('----')
