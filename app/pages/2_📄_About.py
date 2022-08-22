@@ -7,4 +7,4 @@ st.title('About')
 st.write('''
 - Github Repository: `https://github.com/Real-VeerSandhu/Ethnicity-Age-Prediction`
 - Dataset: `https://www.kaggle.com/datasets/age-gender-ethnicity-face-data-csv`
-- Research: `https://ieeexplore.ieee.org/abstract/document/6406799`''')
+- Research Source: `https://ieeexplore.ieee.org/abstract/document/6406799`''')
