@@ -6,4 +6,4 @@ st.title('Identity Prediction')
 st.write('Predicting ethnicity, age, and gender with CNNs')
 
 st.sidebar.success('Select a page above')
-st.caption('Home: information | Demo: app | About: more information')
+st.caption('Home: information | Demo: app | About: resources')

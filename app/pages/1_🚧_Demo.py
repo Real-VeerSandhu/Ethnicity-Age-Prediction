@@ -76,6 +76,7 @@ type = st.radio(
      'Select an image upload method',
      ('Upload from local disk', 'Select from testing data'))
 
+# Local disk image prediction
 if type == 'Upload from local disk':
     uploaded_image = st.file_uploader('Upload An Image', help='Select an image on your local device for the CNNs to process and output', type=['jpg', 'png'])
     if uploaded_image:
@@ -96,6 +97,7 @@ if type == 'Upload from local disk':
                 st.write(f'Age: `{pred_age}`')
                 st.write('----')
                 st.write('*Raw Output:*', pred_raw)
+# Dataset image prediction
 else:
     image_index = st.select_slider(
      'Select a test image',
